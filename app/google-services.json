@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1041578338847",
+    "firebase_url": "https://foodster-36c2b.firebaseio.com",
+    "project_id": "foodster-36c2b",
+    "storage_bucket": "foodster-36c2b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041578338847:android:026e3008bc2c3c883e032a",
+        "android_client_info": {
+          "package_name": "com.xanderlopez.foodster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041578338847-r2mqcs4oqn86tb7kgeil7a02pma8632h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo88qZrXKK7ev5rp1GNs2hSeftW6WEYw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1041578338847-r2mqcs4oqn86tb7kgeil7a02pma8632h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
