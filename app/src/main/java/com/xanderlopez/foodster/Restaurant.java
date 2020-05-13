@@ -6,23 +6,14 @@ public class Restaurant {
     private int id;
     private String name, description, image;
 
-    /* Constructor */
+    public Restaurant() {}
 
-    public Restaurant(int id, String name, String description, String image) {
-        this.id = id;
+    /* Constructor */
+    public Restaurant(String name, String description, String image) {
+        //this.id = id;
         this.name = name;
         this.description = description;
         this.image = image;
-    }
-
-    /* Getter and setter methods */
-
-    public int getId() {
-        return id;
-    }
-
-    public  void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
