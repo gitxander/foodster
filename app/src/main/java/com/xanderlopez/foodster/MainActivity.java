@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -71,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position, @NonNull Restaurant model) {
                 holder.nameLabel.setText(model.getName());
+                holder.descriptionLabel.setText(model.getDescription());
+
+                int drawable = getApplicationContext().getResources().getIdentifier(model.getImage(),"drawable", getPackageName());
+                holder.imageView.setImageResource(drawable);
             }
         };
 
@@ -89,11 +94,15 @@ public class MainActivity extends AppCompatActivity {
     private class RestaurantViewHolder extends RecyclerView.ViewHolder {
 
         private TextView nameLabel;
+        private TextView descriptionLabel;
+        private ImageView imageView;
 
         public RestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
 
             nameLabel = itemView.findViewById(R.id.nameLabel);
+            descriptionLabel = itemView.findViewById(R.id.descriptionLabel);
+            imageView = itemView.findViewById(R.id.imageView);
         }
     }
 
@@ -109,3 +118,8 @@ public class MainActivity extends AppCompatActivity {
         adapter.stopListening();
     }
 }
+
+/*
+* References:
+* https://www.youtube.com/watch?v=cBwaJYocb9I&list=RDCMUCl6DxakCjDR5AfRwWhWNbMg&index=1
+* */
