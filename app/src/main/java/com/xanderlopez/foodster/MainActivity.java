@@ -2,6 +2,7 @@ package com.xanderlopez.foodster;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter_LifecycleAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
     String[] expenseType = {"Home Rent", "Eating Out", "Travel", "Shopping"};
     FirebaseFirestore db;
     RecyclerView recyclerView;
-    FirestoreRecyclerAdapter adapter;
+    HomeAdapter adapter;
+    public static String PACKAGE_NAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,33 +54,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("Foodster");
 
+        PACKAGE_NAME = getApplicationContext().getPackageName();
+
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.propertyRecyclerView);
 
+//        // Create a new user with a first and last name
+//        Map<String, Object> user = new HashMap<>();
+//        user.put("description", "Cheeseburger | French Fries | Cokes");
+//        user.put("image", "berry_bread_breakfast");
+//        user.put("name", "Burger and Fries");
+//
+//// Add a new document with a generated ID
+//        db.collection("restaurants")
+//                .add(user)
+//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                    @Override
+//                    public void onSuccess(DocumentReference documentReference) {
+//                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w(TAG, "Error adding document", e);
+//                    }
+//                });
+
         //Query
         Query  query = db.collection("restaurants");
-
-        FirestoreRecyclerOptions<Restaurant> options = new FirestoreRecyclerOptions.Builder<Restaurant>()
-                .setQuery(query, Restaurant.class)
+        PagedList.Config config = new PagedList.Config.Builder()
+                .setInitialLoadSizeHint(10)
+                .setPageSize(3)
                 .build();
 
-        adapter = new FirestoreRecyclerAdapter<Restaurant, RestaurantViewHolder>(options) {
-            @NonNull
-            @Override
-            public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row, parent, false);
-                return new RestaurantViewHolder(view);
-            }
+        FirestorePagingOptions<Restaurant> options = new FirestorePagingOptions.Builder<Restaurant>()
+                .setLifecycleOwner(this)
+                .setQuery(query, config, Restaurant.class)
+                .build();
 
-            @Override
-            protected void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position, @NonNull Restaurant model) {
-                holder.nameLabel.setText(model.getName());
-                holder.descriptionLabel.setText(model.getDescription());
-
-                int drawable = getApplicationContext().getResources().getIdentifier(model.getImage(),"drawable", getPackageName());
-                holder.imageView.setImageResource(drawable);
-            }
-        };
+        adapter = new HomeAdapter(options, this.getApplicationContext(), PACKAGE_NAME);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -91,20 +107,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //    }
 
-    private class RestaurantViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView nameLabel;
-        private TextView descriptionLabel;
-        private ImageView imageView;
-
-        public RestaurantViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            nameLabel = itemView.findViewById(R.id.nameLabel);
-            descriptionLabel = itemView.findViewById(R.id.descriptionLabel);
-            imageView = itemView.findViewById(R.id.imageView);
-        }
-    }
 
     @Override
     protected void onStart() {
@@ -121,5 +124,13 @@ public class MainActivity extends AppCompatActivity {
 
 /*
 * References:
+*
+* Firestore Database to RecyclerView - Android Studio Tutorial
 * https://www.youtube.com/watch?v=cBwaJYocb9I&list=RDCMUCl6DxakCjDR5AfRwWhWNbMg&index=1
+*
+* Click Events for RecyclerView using Firestore Adapters
+* https://www.youtube.com/watch?v=JLW7z_AaUHA
+*
+* How to get package name from anywhere?
+* https://stackoverflow.com/questions/6589797/how-to-get-package-name-from-anywhere
 * */
