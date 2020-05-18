@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
     HomeAdapter adapter;
     public static String PACKAGE_NAME;
 
+    BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,26 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
 
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.propertyRecyclerView);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home:
+                        Log.d(TAG, "Home");
+                        return  true;
+                    case R.id.cart:
+                        Log.d(TAG, "Cart");
+                        return  true;
+                    case R.id.account:
+                        Log.d(TAG, "Account");
+                        return  true;
+                    default:
+                        return false;
+                }
+            }
+        });
 
 //        // Create a new user with a first and last name
 //        Map<String, Object> user = new HashMap<>();
