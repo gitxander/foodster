@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
                     case R.id.cart:
                         Log.d(TAG, "Cart");
                         return  true;
+                    case R.id.order:
+                        Log.d(TAG, "Order");
+                        return  true;
                     case R.id.account:
                         Log.d(TAG, "Account");
                         return  true;

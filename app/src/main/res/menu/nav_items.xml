@@ -11,6 +11,10 @@
         android:icon="@drawable/baseline_shopping_basket_white_18dp"
         android:title="Cart" />
     <item
+        android:id="@+id/order"
+        android:icon="@drawable/baseline_list_alt_white_18dp"
+        android:title="Order" />
+    <item
         android:id="@+id/account"
         android:icon="@drawable/baseline_perm_identity_white_18dp"
         android:title="Account" />
