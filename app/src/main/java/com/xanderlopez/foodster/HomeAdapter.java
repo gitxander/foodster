@@ -12,16 +12,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import org.w3c.dom.Document;
 
 public class HomeAdapter extends FirestorePagingAdapter<Restaurant, HomeAdapter.RestaurantViewHolder> {
 
     private Context context;
     private String packageName;
+    private OnListItemClicked onListItemClicked;
 
-    public HomeAdapter(@NonNull FirestorePagingOptions<Restaurant> options, Context context, String packageName) {
+    public HomeAdapter(@NonNull FirestorePagingOptions<Restaurant> options, Context context, String packageName, OnListItemClicked onListItemClicked) {
         super(options);
         this.context = context;
         this.packageName = packageName;
+        this.onListItemClicked = onListItemClicked;
     }
 
     @NonNull
@@ -40,7 +45,7 @@ public class HomeAdapter extends FirestorePagingAdapter<Restaurant, HomeAdapter.
         holder.imageView.setImageResource(drawable);
     }
 
-    public class RestaurantViewHolder extends RecyclerView.ViewHolder {
+    public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView nameLabel;
         private TextView descriptionLabel;
@@ -52,6 +57,17 @@ public class HomeAdapter extends FirestorePagingAdapter<Restaurant, HomeAdapter.
             nameLabel = itemView.findViewById(R.id.nameLabel);
             descriptionLabel = itemView.findViewById(R.id.descriptionLabel);
             imageView = itemView.findViewById(R.id.imageView);
+
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            onListItemClicked.onItemClick(getItem(getAdapterPosition()), getAdapterPosition());
+        }
+    }
+
+    public interface OnListItemClicked {
+        void onItemClick(DocumentSnapshot snapshot, int position);
     }
 }

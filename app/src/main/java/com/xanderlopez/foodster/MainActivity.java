@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -37,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HomeAdapter.OnListItemClicked {
 
     private static final String TAG = "Message";
 
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 .setQuery(query, config, Restaurant.class)
                 .build();
 
-        adapter = new HomeAdapter(options, this.getApplicationContext(), PACKAGE_NAME);
+        adapter = new HomeAdapter(options, this.getApplicationContext(), PACKAGE_NAME, this);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -119,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    public void onItemClick(DocumentSnapshot snapshot, int position) {
+        Log.d("ITEM_CLICK", position + " " + snapshot.getId());
     }
 }
 
