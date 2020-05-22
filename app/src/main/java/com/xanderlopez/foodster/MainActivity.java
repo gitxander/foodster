@@ -2,6 +2,9 @@ package com.xanderlopez.foodster;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
     public static String PACKAGE_NAME;
 
     BottomNavigationView bottomNavigationView;
+    Fragment homeRestaurantFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        homeRestaurantFragment = new HomeRestaurantFragment();
+
     }
 
 //
@@ -151,7 +157,19 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
 
     @Override
     public void onItemClick(DocumentSnapshot snapshot, int position) {
-        Log.d("ITEM_CLICK", position + " " + snapshot.getId());
+        Log.d(TAG, position + " " + snapshot.getId());
+
+        recyclerView.setVisibility(View.INVISIBLE);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+
+        ft.replace(R.id.activity_main, homeRestaurantFragment);
+        ft.show(homeRestaurantFragment);
+        ft.commit();
+
     }
 }
 

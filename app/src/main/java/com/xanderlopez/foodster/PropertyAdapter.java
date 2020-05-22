@@ -29,6 +29,11 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
         this.onItemClickedListener = onItemClickedListener;
     }
 
+    public PropertyAdapter(List<Restaurant> propertyList, Context context) {
+        this.propertyList = propertyList;
+        this.context = context;
+    }
+
     /* References views to a data item */
     public class PropertyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView name;
