@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
     public static String PACKAGE_NAME;
 
     BottomNavigationView bottomNavigationView;
-    Fragment homeRestaurantFragment;
+    Fragment itemFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
 ////                });
 
         //Query
-        Query  query = db.collection("items");
+        Query query = db.collection("items");
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
                 .setPageSize(3)
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(itemAdapter);
 
-        homeRestaurantFragment = new HomeRestaurantFragment();
+        itemFragment = new ItemFragment();
 //
     }
 
@@ -171,16 +171,17 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
 
         Bundle bundle = new Bundle();
         bundle.putString("PACKAGE_NAME", PACKAGE_NAME);
+        bundle.putString("name", (String) snapshot.get("name"));
 
-        homeRestaurantFragment.setArguments(bundle);
+        itemFragment.setArguments(bundle);
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
         ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
 
-        ft.replace(R.id.activity_main, homeRestaurantFragment);
-        ft.show(homeRestaurantFragment);
+        ft.replace(R.id.activity_main, itemFragment);
+        ft.show(itemFragment);
         ft.commit();
 
     }
