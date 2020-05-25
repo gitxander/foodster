@@ -136,11 +136,6 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
 //
 //    }
 
-    public  void addToCart(View view) {
-        Log.d(TAG, "add to cart");
-    }
-
-
 
     @Override
     protected void onStart() {

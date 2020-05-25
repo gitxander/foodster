@@ -12,11 +12,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -27,7 +30,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ItemFragment extends Fragment {
@@ -40,6 +45,12 @@ public class ItemFragment extends Fragment {
     FirebaseFirestore db;
 
     String PACKAGE_NAME, name;
+
+     TextView nameLabel;
+     TextView descriptionLabel;
+     ImageView imageView;
+
+     ItemClass itemClass;
 
     public ItemFragment() {
         // Required empty public constructor
@@ -60,12 +71,22 @@ public class ItemFragment extends Fragment {
         /* Instantiate propertyList */
         propertyList = new ArrayList<>();
 
+        itemClass = new ItemClass();
+
         /* get the root view fragment layout */
         View rootView = inflater.inflate(R.layout.fragment_item, container, false);
 
-        final TextView nameLabel = rootView.findViewById(R.id.nameLabel);
-        final TextView descriptionLabel = rootView.findViewById(R.id.descriptionLabel);
-        final ImageView imageView = rootView.findViewById(R.id.imageView);
+        Button addToCart = (Button) rootView.findViewById(R.id.addToCartButton);
+        addToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToCart(v);
+            }
+        });
+
+        nameLabel = rootView.findViewById(R.id.nameLabel);
+        descriptionLabel = rootView.findViewById(R.id.descriptionLabel);
+        imageView = rootView.findViewById(R.id.imageView);
 
         db = FirebaseFirestore.getInstance();
         db.collection("items").whereEqualTo("name",name)
@@ -77,11 +98,14 @@ public class ItemFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
 
+                                itemClass.setName(String.valueOf(document.get("name")));
+                                itemClass.setDescription(String.valueOf(document.get("description")));
+                                itemClass.setImage(String.valueOf(document.get("image")));
 
-                                nameLabel.setText(String.valueOf(document.get("name")));
-                                descriptionLabel.setText(String.valueOf(document.get("description")));
+                                nameLabel.setText(itemClass.getName());
+                                descriptionLabel.setText(itemClass.getDescription());
 
-                                int drawable = container.getContext().getResources().getIdentifier(String.valueOf(document.get("image"))   ,"drawable", PACKAGE_NAME);
+                                int drawable = container.getContext().getResources().getIdentifier(itemClass.getImage(),"drawable", PACKAGE_NAME);
                                 imageView.setImageResource(drawable);
 
                             }
@@ -95,7 +119,36 @@ public class ItemFragment extends Fragment {
     }
 
     public void addToCart(View view) {
-        Log.w("MESSAGE", "add to cart");
+        Log.w("MESSAGE", "add to cartssss");
+
+        CartClass cartClass = new CartClass();
+        cartClass.setName(itemClass.getName());
+        cartClass.setDescription(itemClass.getDescription());
+        cartClass.setId(1);
+        cartClass.setQuantity(1);
+
+        // Create a new user with a first and last name
+//        Map<String, Object> obj = new HashMap<>();
+//        obj.put("description", "Spaghetti | Pasta | Cheese");
+//        obj.put("image", "berry_bread_breakfast");
+//        obj.put("name", "Cheese Pasta");
+//        obj.put("price", "10.50");
+
+        //Add a new document with a generated ID
+        db.collection("carts")
+                .add(cartClass)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
     }
 
 
