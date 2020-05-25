@@ -6,42 +6,23 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.paging.PagedList;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter_LifecycleAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements HomeAdapter.OnListItemClicked {
 
@@ -75,15 +56,23 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
                 switch (item.getItemId()) {
                     case R.id.home:
                         Log.d(TAG, "Home");
+                        Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
+                        startActivityForResult(homeIntent, 0);
                         return  true;
                     case R.id.cart:
                         Log.d(TAG, "Cart");
+                        Intent cartIntent = new Intent(MainActivity.this, CartActivity.class);
+                        startActivityForResult(cartIntent, 0);
                         return  true;
                     case R.id.order:
                         Log.d(TAG, "Order");
+                        Intent orderIntent = new Intent(MainActivity.this, OrderActivity.class);
+                        startActivityForResult(orderIntent, 0);
                         return  true;
-                    case R.id.account:
-                        Log.d(TAG, "Account");
+                    case R.id.profile:
+                        Log.d(TAG, "Profile");
+                        Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                        startActivityForResult(profileIntent, 0);
                         return  true;
                     default:
                         return false;
@@ -93,12 +82,14 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
 
 //        // Create a new user with a first and last name
 //        Map<String, Object> user = new HashMap<>();
-//        user.put("description", "Cheeseburger | French Fries | Cokes");
-//        user.put("image", "berry_bread_breakfast");
-//        user.put("name", "Burger and Fries");
+//        user.put("description", "Cheese | Garlic | Onion");
+//        user.put("image", "berry_waffle_breakfast");
+//        user.put("name", "French Fries");
+//        user.put("price", "9.99");
+//        user.put("rid", "1");
 //
 //// Add a new document with a generated ID
-//        db.collection("restaurants")
+//        db.collection("menu")
 //                .add(user)
 //                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
 //                    @Override
@@ -132,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
         recyclerView.setAdapter(adapter);
 
         homeRestaurantFragment = new HomeRestaurantFragment();
-
+//
     }
 
 //
@@ -140,6 +131,10 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
 //    public void onItemClicked(int position) {
 //
 //    }
+
+    public  void addToCart(View view) {
+        Log.d(TAG, "add to cart");
+    }
 
 
 
@@ -159,7 +154,21 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
     public void onItemClick(DocumentSnapshot snapshot, int position) {
         Log.d(TAG, position + " " + snapshot.getId());
 
+//        /* Initialise new intent */
+//        Intent intent = new Intent(this, HomeMenuActivity.class);
+//
+//        /* Pass expense type data to the second activity */
+//        intent.putExtra("EXPENSE_TYPE", position + " " + snapshot.getId());
+//
+//        /* Start next activity */
+//        startActivityForResult(intent, 0);
+
         recyclerView.setVisibility(View.INVISIBLE);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("PACKAGE_NAME", PACKAGE_NAME);
+
+        homeRestaurantFragment.setArguments(bundle);
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();

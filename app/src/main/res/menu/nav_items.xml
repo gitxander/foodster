@@ -15,7 +15,7 @@
         android:icon="@drawable/baseline_list_alt_white_18dp"
         android:title="Order" />
     <item
-        android:id="@+id/account"
+        android:id="@+id/profile"
         android:icon="@drawable/baseline_perm_identity_white_18dp"
-        android:title="Account" />
+        android:title="Profile" />
 </menu>
