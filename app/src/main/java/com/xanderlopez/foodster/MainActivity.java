@@ -16,15 +16,20 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements HomeAdapter.OnListItemClicked {
+public class MainActivity extends AppCompatActivity implements ItemAdapter.OnListItemClicked {
 
     private static final String TAG = "Message";
 
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
     String[] expenseType = {"Home Rent", "Eating Out", "Travel", "Shopping"};
     FirebaseFirestore db;
     RecyclerView recyclerView;
-    HomeAdapter adapter;
+    ItemAdapter itemAdapter;
     public static String PACKAGE_NAME;
 
     BottomNavigationView bottomNavigationView;
@@ -80,47 +85,46 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
             }
         });
 
-//        // Create a new user with a first and last name
+        // Create a new user with a first and last name
 //        Map<String, Object> user = new HashMap<>();
-//        user.put("description", "Cheese | Garlic | Onion");
-//        user.put("image", "berry_waffle_breakfast");
-//        user.put("name", "French Fries");
-//        user.put("price", "9.99");
-//        user.put("rid", "1");
+//        user.put("description", "Spaghetti | Pasta | Cheese");
+//        user.put("image", "berry_bread_breakfast");
+//        user.put("name", "Cheese Pasta");
+//        user.put("price", "10.50");
 //
 //// Add a new document with a generated ID
-//        db.collection("menu")
-//                .add(user)
-//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                    @Override
-//                    public void onSuccess(DocumentReference documentReference) {
-//                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w(TAG, "Error adding document", e);
-//                    }
-//                });
+////        db.collection("items")
+////                .add(user)
+////                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+////                    @Override
+////                    public void onSuccess(DocumentReference documentReference) {
+////                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+////                    }
+////                })
+////                .addOnFailureListener(new OnFailureListener() {
+////                    @Override
+////                    public void onFailure(@NonNull Exception e) {
+////                        Log.w(TAG, "Error adding document", e);
+////                    }
+////                });
 
         //Query
-        Query  query = db.collection("restaurants");
+        Query  query = db.collection("items");
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
                 .setPageSize(3)
                 .build();
 
-        FirestorePagingOptions<Restaurant> options = new FirestorePagingOptions.Builder<Restaurant>()
+        FirestorePagingOptions<ItemClass> options = new FirestorePagingOptions.Builder<ItemClass>()
                 .setLifecycleOwner(this)
-                .setQuery(query, config, Restaurant.class)
+                .setQuery(query, config, ItemClass.class)
                 .build();
 
-        adapter = new HomeAdapter(options, this.getApplicationContext(), PACKAGE_NAME, this);
+        itemAdapter = new ItemAdapter(options, this.getApplicationContext(), PACKAGE_NAME, this);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(itemAdapter);
 
         homeRestaurantFragment = new HomeRestaurantFragment();
 //
@@ -141,13 +145,13 @@ public class MainActivity extends AppCompatActivity implements HomeAdapter.OnLis
     @Override
     protected void onStart() {
         super.onStart();
-        adapter.startListening();
+        itemAdapter.startListening();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        adapter.stopListening();
+        itemAdapter.stopListening();
     }
 
     @Override
