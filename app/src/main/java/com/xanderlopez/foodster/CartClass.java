@@ -3,8 +3,8 @@ package com.xanderlopez.foodster;
 public class CartClass {
 
     private int id, quantity;
-    private String name, description, image;
-    private float price, subtotal;
+    private String name, description, image, documentID;
+    private Double price, subtotal;
 
     public int getId() {
         return id;
@@ -38,27 +38,31 @@ public class CartClass {
         this.description = description;
     }
 
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public float getSubtotal() {
-        return subtotal;
-    }
-
-    public void setSubtotal(float subtotal) {
-        this.subtotal = subtotal;
-    }
-
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getDocumentID() {
+        return documentID;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Double getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
     }
 }

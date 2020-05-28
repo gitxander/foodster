@@ -4,6 +4,7 @@ public class ItemClass {
 
     private int id;
     private String name, description, image;
+    private Double price;
 
     public ItemClass() {}
 
@@ -37,5 +38,13 @@ public class ItemClass {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

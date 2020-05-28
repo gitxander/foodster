@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -101,6 +102,7 @@ public class ItemFragment extends Fragment {
                                 itemClass.setName(String.valueOf(document.get("name")));
                                 itemClass.setDescription(String.valueOf(document.get("description")));
                                 itemClass.setImage(String.valueOf(document.get("image")));
+                                itemClass.setPrice(Double.parseDouble(String.valueOf(document.get("price"))));
 
                                 nameLabel.setText(itemClass.getName());
                                 descriptionLabel.setText(itemClass.getDescription());
@@ -118,38 +120,76 @@ public class ItemFragment extends Fragment {
         return rootView;
     }
 
-    public void addToCart(View view) {
+    public void addToCart(final View view) {
         Log.w("MESSAGE", "add to cartssss");
 
-        CartClass cartClass = new CartClass();
+        final CartClass cartClass = new CartClass();
         cartClass.setName(itemClass.getName());
         cartClass.setDescription(itemClass.getDescription());
+        cartClass.setPrice(itemClass.getPrice());
         cartClass.setId(1);
         cartClass.setQuantity(1);
+        cartClass.setSubtotal(itemClass.getPrice());
         cartClass.setImage(itemClass.getImage());
 
-        // Create a new user with a first and last name
-//        Map<String, Object> obj = new HashMap<>();
-//        obj.put("description", "Spaghetti | Pasta | Cheese");
-//        obj.put("image", "berry_bread_breakfast");
-//        obj.put("name", "Cheese Pasta");
-//        obj.put("price", "10.50");
+        db.collection("carts").whereEqualTo("name",itemClass.getName())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
 
-        //Add a new document with a generated ID
-        db.collection("carts")
-                .add(cartClass)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                            if(task.getResult().isEmpty()) {
+                                // add
+                                Log.w(TAG, "ADD ITEM");
+
+                                // Add a new document with a generated ID
+                                db.collection("carts")
+                                        .add(cartClass)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                db.collection("carts").document(documentReference.getId()).update("documentID", documentReference.getId());
+                                                Toast.makeText(view.getContext(), cartClass.getName() + " added to cart", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error adding document", e);
+                                            }
+                                        });
+                            } else {
+                                // update qty & subtotal
+                                Log.w(TAG, "UPDATE ITEM QTY");
+
+                                Toast.makeText(view.getContext(), cartClass.getName() + " Adding to cart ... ", Toast.LENGTH_SHORT).show();
+
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+
+                                    int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) + 1;
+                                    double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
+
+                                    db.collection("carts").document(String.valueOf(document.get("documentID"))).update("quantity", newQuantity, "subtotal", newSubtotal)
+                                            .addOnSuccessListener(new OnSuccessListener < Void > () {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
+                                                }
+                                    });;
+
+                                }
+
+
+                            }
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                        }
                     }
                 });
+
     }
 
 
