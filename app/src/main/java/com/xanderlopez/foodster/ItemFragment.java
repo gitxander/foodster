@@ -126,6 +126,7 @@ public class ItemFragment extends Fragment {
         cartClass.setDescription(itemClass.getDescription());
         cartClass.setId(1);
         cartClass.setQuantity(1);
+        cartClass.setImage(itemClass.getImage());
 
         // Create a new user with a first and last name
 //        Map<String, Object> obj = new HashMap<>();

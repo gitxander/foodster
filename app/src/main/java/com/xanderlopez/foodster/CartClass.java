@@ -3,7 +3,7 @@ package com.xanderlopez.foodster;
 public class CartClass {
 
     private int id, quantity;
-    private String name, description;
+    private String name, description, image;
     private float price, subtotal;
 
     public int getId() {
@@ -52,5 +52,13 @@ public class CartClass {
 
     public void setSubtotal(float subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
