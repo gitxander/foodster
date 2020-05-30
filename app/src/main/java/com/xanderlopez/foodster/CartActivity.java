@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.paging.PagedList;
@@ -30,6 +32,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     FirebaseFirestore db;
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
+    Fragment checkoutFragment;
+    Button checkoutButton;
     private FirebaseAuth mAuth;
 
     public static String PACKAGE_NAME;
@@ -70,6 +74,35 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cartAdapter);
 
+        checkoutFragment = new CheckoutFragment();
+
+        checkoutButton = (Button) findViewById(R.id.checkoutButton);
+        checkoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkout();
+            }
+        });
+
+    }
+
+    public void checkout() {
+        recyclerView.setVisibility(View.INVISIBLE);
+        checkoutButton.setVisibility(View.INVISIBLE);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("PACKAGE_NAME", PACKAGE_NAME);
+
+        checkoutFragment.setArguments(bundle);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+
+        ft.replace(R.id.cart, checkoutFragment);
+        ft.show(checkoutFragment);
+        ft.commit();
     }
 
     @Override

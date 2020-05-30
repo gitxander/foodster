@@ -140,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void createUserWithEmailAndPassword(View view) {
 
-        TextView emailInput = (TextView) findViewById(R.id.emailInput);
+        TextView emailInput = (TextView) findViewById(R.id.cardName);
         TextView passwordInput = (TextView) findViewById(R.id.passwordInput);
         TextView passwordConfirmInput = (TextView) findViewById(R.id.passwordConfirmInput);
 
@@ -183,7 +183,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Log.d(TAG, "triggered signInWithEmailAndPassword ");
 
-        TextView emailInput = (TextView) findViewById(R.id.emailInput);
+        TextView emailInput = (TextView) findViewById(R.id.cardName);
         TextView passwordInput = (TextView) findViewById(R.id.passwordInput);
 
         String email = emailInput.getText().toString();
