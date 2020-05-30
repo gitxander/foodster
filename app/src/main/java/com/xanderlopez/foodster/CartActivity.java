@@ -57,7 +57,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         FirebaseUser user = mAuth.getCurrentUser();
 
         //Query
-        Query query = db.collection("carts").whereEqualTo("userID", user.getUid());
+        Query query = db.collection("carts").whereEqualTo("userID", user.getUid()).whereEqualTo("ordered",false);
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
                 .setPageSize(3)

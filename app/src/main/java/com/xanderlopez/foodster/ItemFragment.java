@@ -146,64 +146,65 @@ public class ItemFragment extends Fragment {
         cartClass.setQuantity(1);
         cartClass.setSubtotal(itemClass.getPrice());
         cartClass.setImage(itemClass.getImage());
+        cartClass.setOrdered(false);
 
-        db.collection("carts").whereEqualTo("name",itemClass.getName()).whereEqualTo("userID", user.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
+        db.collection("carts").whereEqualTo("name",itemClass.getName()).whereEqualTo("userID", user.getUid()).whereEqualTo("ordered",false)
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
 
-                            if(task.getResult().isEmpty()) {
-                                // add
-                                Log.w(TAG, "ADD ITEM");
+                    if(task.getResult().isEmpty()) {
+                        // add
+                        Log.w(TAG, "ADD ITEM");
 
-                                // Add a new document with a generated ID
-                                db.collection("carts")
-                                        .add(cartClass)
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                db.collection("carts").document(documentReference.getId()).update("documentID", documentReference.getId());
-                                                Toast.makeText(view.getContext(), cartClass.getName() + " added to cart", Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error adding document", e);
-                                            }
-                                        });
-                            } else {
-                                // update qty & subtotal
-                                Log.w(TAG, "UPDATE ITEM QTY");
+                        // Add a new document with a generated ID
+                        db.collection("carts")
+                                .add(cartClass)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                        db.collection("carts").document(documentReference.getId()).update("documentID", documentReference.getId());
+                                        Toast.makeText(view.getContext(), cartClass.getName() + " added to cart", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error adding document", e);
+                                    }
+                                });
+                    } else {
+                        // update qty & subtotal
+                        Log.w(TAG, "UPDATE ITEM QTY");
 
-                                Toast.makeText(view.getContext(), cartClass.getName() + " Adding to cart ... ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(view.getContext(), cartClass.getName() + " Adding to cart ... ", Toast.LENGTH_SHORT).show();
 
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d(TAG, document.getId() + " => " + document.getData());
 
-                                    int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) + 1;
-                                    double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
+                            int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) + 1;
+                            double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
 
-                                    db.collection("carts").document(String.valueOf(document.get("documentID"))).update("quantity", newQuantity, "subtotal", newSubtotal)
-                                            .addOnSuccessListener(new OnSuccessListener < Void > () {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
-                                                }
-                                    });;
+                            db.collection("carts").document(String.valueOf(document.get("documentID"))).update("quantity", newQuantity, "subtotal", newSubtotal)
+                                    .addOnSuccessListener(new OnSuccessListener < Void > () {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
+                                        }
+                            });;
 
-                                }
-
-
-                            }
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
                         }
+
+
                     }
-                });
+                } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
+                }
+                }
+            });
 
     }
 

@@ -4,6 +4,7 @@ public class CartClass {
 
     private int quantity;
     private String name, description, image, documentID, userID;
+    private boolean ordered;
     private Double price, subtotal;
 
     public int getQuantity() {
@@ -68,5 +69,13 @@ public class CartClass {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public boolean isOrdered() {
+        return ordered;
+    }
+
+    public void setOrdered(boolean ordered) {
+        this.ordered = ordered;
     }
 }
