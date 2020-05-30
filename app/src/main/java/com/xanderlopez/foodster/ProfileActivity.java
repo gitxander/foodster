@@ -2,6 +2,7 @@ package com.xanderlopez.foodster;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,65 +31,14 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* Set second content view layout */
-        setContentView(R.layout.profile);
 
-        bottomNavigation();
+
+
 
         mAuth = FirebaseAuth.getInstance();
 
-//        Button signupButton = (Button) findViewById(R.id.signupButton);
-//        signupButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                createUserWithEmailAndPassword(v);
-//            }
-//        });
-
-//        Button signinpButton = (Button) findViewById(R.id.signinButton);
-//        signinpButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                signInWithEmailAndPassword(v);
-//            }
-//        });
-
-        Button logoutButton = (Button) findViewById(R.id.logoutButton);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAuth.signOut();
-                setContentView(R.layout.profile_signin);
-            }
-        });
 
 
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            //Uri photoUrl = user.getPhotoUrl();
-
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getIdToken() instead.
-            String uid = user.getUid();
-
-            TextView nameTextView = (TextView) findViewById(R.id.nameTextView);
-            nameTextView.setText(email);
-
-            Log.d(TAG, "name " + name);
-            Log.d(TAG, "email " + email);
-
-            //setContentView(R.layout.profile);
-        } else {
-            //setContentView(R.layout.profile_signin);
-        }
 
 
 
@@ -97,10 +47,95 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
-        Log.d(TAG, "currentUser " + currentUser);
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            profile(user);
+        } else {
+            signin();
+        }
+
+
+    }
+
+    public void profile(FirebaseUser user) {
+        setContentView(R.layout.profile);
+        bottomNavigation();
+
+        // Name, email address, and profile photo Url
+        String name = user.getDisplayName();
+        String email = user.getEmail();
+        //Uri photoUrl = user.getPhotoUrl();
+
+        // Check if user's email is verified
+        boolean emailVerified = user.isEmailVerified();
+
+        // The user's ID, unique to the Firebase project. Do NOT use this value to
+        // authenticate with your backend server, if you have one. Use
+        // FirebaseUser.getIdToken() instead.
+        String uid = user.getUid();
+
+        TextView nameTextView = (TextView) findViewById(R.id.nameTextView);
+        nameTextView.setText(email);
+
+        Log.d(TAG, "name " + name);
+        Log.d(TAG, "email " + email);
+
+        Button logoutButton = (Button) findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                signin();
+            }
+        });
+    }
+
+    public void signin() {
+        setContentView(R.layout.profile_signin);
+        bottomNavigation();
+
+        Log.d(TAG, "sign in button clicked ");
+
+        Button signinButton = (Button) findViewById(R.id.signinButton);
+        signinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInWithEmailAndPassword(v);
+            }
+        });
+
+        Button signupButton = (Button) findViewById(R.id.signupButton);
+        signupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signup();
+            }
+        });
+
+    }
+
+    public void signup() {
+        setContentView(R.layout.profile_signup);
+        bottomNavigation();
+
+        Button signupButton = (Button) findViewById(R.id.signupButton);
+        signupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createUserWithEmailAndPassword(v);
+            }
+        });
+
+        Button cancelButton = (Button) findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signin();
+            }
+        });
+
     }
 
     public void createUserWithEmailAndPassword(View view) {
@@ -111,6 +146,17 @@ public class ProfileActivity extends AppCompatActivity {
 
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();
+        String confirmPassword  = passwordConfirmInput.getText().toString();
+
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
+            Toast.makeText(ProfileActivity.this, "Please answer all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(!password.equals(confirmPassword)) {
+            Toast.makeText(ProfileActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -124,8 +170,7 @@ public class ProfileActivity extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        Toast.makeText(ProfileActivity.this, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileActivity.this, "Failed. " + task.getException(), Toast.LENGTH_SHORT).show();
                         //updateUI(null);
                     }
 
@@ -136,11 +181,18 @@ public class ProfileActivity extends AppCompatActivity {
 
     public  void signInWithEmailAndPassword(View view) {
 
+        Log.d(TAG, "triggered signInWithEmailAndPassword ");
+
         TextView emailInput = (TextView) findViewById(R.id.emailInput);
         TextView passwordInput = (TextView) findViewById(R.id.passwordInput);
 
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();
+
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(ProfileActivity.this, "Please answer all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -150,12 +202,11 @@ public class ProfileActivity extends AppCompatActivity {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
-                    setContentView(R.layout.profile);
+                    profile(user);
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.getException());
-                    Toast.makeText(ProfileActivity.this, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, "Sign in failed. " + task.getException(), Toast.LENGTH_SHORT).show();
                     //updateUI(null);
                 }
 

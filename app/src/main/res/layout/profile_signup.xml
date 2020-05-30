@@ -77,4 +77,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordConfirmInput" />
 
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@android:string/cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signupButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
