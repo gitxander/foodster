@@ -1,5 +1,6 @@
 package com.xanderlopez.foodster;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -53,6 +56,8 @@ public class ItemFragment extends Fragment {
 
      ItemClass itemClass;
 
+    private FirebaseAuth mAuth;
+
     public ItemFragment() {
         // Required empty public constructor
     }
@@ -64,6 +69,8 @@ public class ItemFragment extends Fragment {
             PACKAGE_NAME = getArguments().getString("PACKAGE_NAME");
             name = getArguments().getString("name");
         }
+
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -123,16 +130,24 @@ public class ItemFragment extends Fragment {
     public void addToCart(final View view) {
         Log.w("MESSAGE", "add to cartssss");
 
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            Intent profileIntent = new Intent(view.getContext(), ProfileActivity.class);
+            startActivityForResult(profileIntent, 0);
+            return;
+        }
+
         final CartClass cartClass = new CartClass();
         cartClass.setName(itemClass.getName());
         cartClass.setDescription(itemClass.getDescription());
         cartClass.setPrice(itemClass.getPrice());
-        cartClass.setId(1);
+        cartClass.setUserID(user.getUid());
         cartClass.setQuantity(1);
         cartClass.setSubtotal(itemClass.getPrice());
         cartClass.setImage(itemClass.getImage());
 
-        db.collection("carts").whereEqualTo("name",itemClass.getName())
+        db.collection("carts").whereEqualTo("name",itemClass.getName()).whereEqualTo("userID", user.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

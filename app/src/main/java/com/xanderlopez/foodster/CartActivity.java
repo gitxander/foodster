@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -28,6 +30,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     FirebaseFirestore db;
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
+    private FirebaseAuth mAuth;
 
     public static String PACKAGE_NAME;
 
@@ -38,6 +41,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         /* Set second content view layout */
         setContentView(R.layout.cart);
 
+        mAuth = FirebaseAuth.getInstance();
+
         this.bottomNavigation();
 
         PACKAGE_NAME = getApplicationContext().getPackageName();
@@ -45,8 +50,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.propertyRecyclerView);
 
+        FirebaseUser user = mAuth.getCurrentUser();
+
         //Query
-        Query query = db.collection("carts");
+        Query query = db.collection("carts").whereEqualTo("userID", user.getUid());
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
                 .setPageSize(3)

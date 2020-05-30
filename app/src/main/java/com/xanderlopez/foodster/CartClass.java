@@ -2,17 +2,9 @@ package com.xanderlopez.foodster;
 
 public class CartClass {
 
-    private int id, quantity;
-    private String name, description, image, documentID;
+    private int quantity;
+    private String name, description, image, documentID, userID;
     private Double price, subtotal;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getQuantity() {
         return quantity;
@@ -64,5 +56,17 @@ public class CartClass {
 
     public void setSubtotal(Double subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public void setDocumentID(String documentID) {
+        this.documentID = documentID;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }
