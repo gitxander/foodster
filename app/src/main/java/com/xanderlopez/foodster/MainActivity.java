@@ -53,60 +53,8 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
 
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.propertyRecyclerView);
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.home:
-                        Log.d(TAG, "Home");
-                        Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
-                        startActivityForResult(homeIntent, 0);
-                        return  true;
-                    case R.id.cart:
-                        Log.d(TAG, "Cart");
-                        Intent cartIntent = new Intent(MainActivity.this, CartActivity.class);
-                        startActivityForResult(cartIntent, 0);
-                        return  true;
-                    case R.id.order:
-                        Log.d(TAG, "Order");
-                        Intent orderIntent = new Intent(MainActivity.this, OrderActivity.class);
-                        startActivityForResult(orderIntent, 0);
-                        return  true;
-                    case R.id.profile:
-                        Log.d(TAG, "Profile");
-                        Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-                        startActivityForResult(profileIntent, 0);
-                        return  true;
-                    default:
-                        return false;
-                }
-            }
-        });
-
-        // Create a new user with a first and last name
-//        Map<String, Object> user = new HashMap<>();
-//        user.put("description", "Spaghetti | Pasta | Cheese");
-//        user.put("image", "berry_bread_breakfast");
-//        user.put("name", "Cheese Pasta");
-//        user.put("price", "10.50");
-//
-//// Add a new document with a generated ID
-////        db.collection("items")
-////                .add(user)
-////                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-////                    @Override
-////                    public void onSuccess(DocumentReference documentReference) {
-////                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-////                    }
-////                })
-////                .addOnFailureListener(new OnFailureListener() {
-////                    @Override
-////                    public void onFailure(@NonNull Exception e) {
-////                        Log.w(TAG, "Error adding document", e);
-////                    }
-////                });
+        this.bottomNavigation();
 
         //Query
         Query query = db.collection("items");
@@ -178,6 +126,41 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
         ft.replace(R.id.activity_main, itemFragment);
         ft.show(itemFragment);
         ft.commit();
+
+    }
+
+    public void bottomNavigation() {
+
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home:
+                        Log.d(TAG, "Home");
+                        Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
+                        startActivityForResult(homeIntent, 0);
+                        return  true;
+                    case R.id.cart:
+                        Log.d(TAG, "Cart");
+                        Intent cartIntent = new Intent(MainActivity.this, CartActivity.class);
+                        startActivityForResult(cartIntent, 0);
+                        return  true;
+                    case R.id.order:
+                        Log.d(TAG, "Order");
+                        Intent orderIntent = new Intent(MainActivity.this, OrderActivity.class);
+                        startActivityForResult(orderIntent, 0);
+                        return  true;
+                    case R.id.profile:
+                        Log.d(TAG, "Profile");
+                        Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                        startActivityForResult(profileIntent, 0);
+                        return  true;
+                    default:
+                        return false;
+                }
+            }
+        });
 
     }
 }
