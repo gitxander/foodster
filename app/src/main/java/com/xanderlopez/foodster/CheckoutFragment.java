@@ -28,6 +28,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+
 public class CheckoutFragment extends Fragment {
 
     String PACKAGE_NAME;
@@ -82,7 +86,7 @@ public class CheckoutFragment extends Fragment {
         goBackButton.setVisibility(View.INVISIBLE);
 
         TextView totalLabel = rootView.findViewById(R.id.totalLabel);
-        totalLabel.setText("$" + total);
+        totalLabel.setText("$"+ NumberFormat.getInstance().format(round(total)));
 
         return rootView;
     }
@@ -161,6 +165,14 @@ public class CheckoutFragment extends Fragment {
         checkoutSuccessLabel.setVisibility(View.VISIBLE);
         goBackButton.setVisibility(View.VISIBLE);
 
+    }
+
+    /*  function for rounding off to two decimal places
+     *   https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places  */
+    public static double round(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 
