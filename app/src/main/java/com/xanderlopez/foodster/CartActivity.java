@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,6 +68,27 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.propertyRecyclerView);
 
+        this.retrieveCart();
+
+        checkoutFragment = new CheckoutFragment();
+
+        emptyCartLabel = findViewById(R.id.noOrderLabel);
+        totalLabel = findViewById(R.id.totalLabel);
+        totalLabel2 = findViewById(R.id.totalLabel2);
+        checkoutButton = findViewById(R.id.checkoutButton);
+
+        this.cartIsEmpty();
+
+        checkoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkout();
+            }
+        });
+
+    }
+
+    public void retrieveCart() {
         FirebaseUser user = mAuth.getCurrentUser();
         String userID = user != null ? user.getUid() : "null";
 
@@ -87,48 +110,30 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cartAdapter);
 
-        checkoutFragment = new CheckoutFragment();
-
-        emptyCartLabel = findViewById(R.id.noOrderLabel);
-        totalLabel = findViewById(R.id.totalLabel);
-        totalLabel2 = findViewById(R.id.totalLabel2);
-        checkoutButton = findViewById(R.id.checkoutButton);
-
-        this.cartIsEmpty();
-
         query.get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
 
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            total += Double.parseDouble(String.valueOf(document.get("subtotal")));
-                        }
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                total += Double.parseDouble(String.valueOf(document.get("subtotal")));
+                            }
 
-                        totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
+                            totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
 
-                        if(total == 0) {
-                            cartIsEmpty();
-                            emptyCartLabel.setVisibility(View.VISIBLE);
+                            if(total == 0) {
+                                cartIsEmpty();
+                                emptyCartLabel.setVisibility(View.VISIBLE);
+                            } else {
+                                cartIsNotEmpty();
+                                emptyCartLabel.setVisibility(View.INVISIBLE);
+                            }
                         } else {
-                            cartIsNotEmpty();
-                            emptyCartLabel.setVisibility(View.INVISIBLE);
+                            Log.w(TAG, "Error getting documents.", task.getException());
                         }
-                    } else {
-                        Log.w(TAG, "Error getting documents.", task.getException());
                     }
-                }
-            });
-
-
-        checkoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkout();
-            }
-        });
-
+                });
     }
 
     public void cartIsEmpty() {
@@ -181,20 +186,43 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     }
 
     @Override
-    public void onItemClick(DocumentSnapshot snapshot, int position) {
-        Log.d(TAG, position + " " + snapshot.getId());
-
-//        /* Initialise new intent */
-//        Intent intent = new Intent(this, HomeMenuActivity.class);
-//
-//        /* Pass expense type data to the second activity */
-//        intent.putExtra("EXPENSE_TYPE", position + " " + snapshot.getId());
-//
-//        /* Start next activity */
-//        startActivityForResult(intent, 0);
+    public void onItemDecreased(DocumentSnapshot document, int position) {
+        Log.d(TAG, "onItemDecreased - cartactivity");
+        Log.d(TAG, position + " " + document.getId() + " " + document.get("quantity"));
 
 
+        int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) - 1;
+        double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
+
+        db.collection("carts").document(document.getId()).update("quantity", newQuantity, "subtotal", newSubtotal)
+                .addOnSuccessListener(new OnSuccessListener< Void >() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
+                        total = 0.0;
+                        retrieveCart();
+                    }
+                });;
     }
+
+    @Override
+    public void onItemIncreased(DocumentSnapshot document, int position) {
+        Log.d(TAG, "onItemIncreased - cartactivity");
+
+        int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) + 1;
+        double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
+
+        db.collection("carts").document(document.getId()).update("quantity", newQuantity, "subtotal", newSubtotal)
+                .addOnSuccessListener(new OnSuccessListener< Void >() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
+                        total = 0.0;
+                        retrieveCart();
+                    }
+                });;
+    }
+
 
     /*  function for rounding off to two decimal places
      *   https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places  */
@@ -238,5 +266,4 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
             }
         });
     }
-
 }

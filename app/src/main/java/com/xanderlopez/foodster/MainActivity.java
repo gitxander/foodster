@@ -179,4 +179,10 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
 *
 * Firestore Paging Adapter- How to know if query returns 0 results
 * https://stackoverflow.com/questions/57441563/firestore-paging-adapter-how-to-know-if-query-returns-0-results
+*
+* How can I set OnClickListener to two buttons in RecyclerView?
+* https://stackoverflow.com/questions/45474333/how-can-i-set-onclicklistener-to-two-buttons-in-recyclerview/45474550
+*
+* Handle Button click inside a row in RecyclerView
+* https://stackoverflow.com/questions/30284067/handle-button-click-inside-a-row-in-recyclerview
 * */
