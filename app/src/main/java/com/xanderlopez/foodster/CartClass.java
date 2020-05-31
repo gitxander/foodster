@@ -2,7 +2,7 @@ package com.xanderlopez.foodster;
 
 public class CartClass {
 
-    private int quantity;
+    private int quantity, orderID;
     private String name, description, image, documentID, userID;
     private boolean ordered;
     private Double price, subtotal, total;
@@ -85,5 +85,13 @@ public class CartClass {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public int getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(int orderID) {
+        this.orderID = orderID;
     }
 }
