@@ -55,9 +55,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         recyclerView = findViewById(R.id.propertyRecyclerView);
 
         FirebaseUser user = mAuth.getCurrentUser();
+        String userID = user != null ? user.getUid() : "null";
 
         //Query
-        Query query = db.collection("carts").whereEqualTo("userID", user.getUid()).whereEqualTo("ordered",false);
+        Query query = db.collection("carts").whereEqualTo("userID", userID).whereEqualTo("ordered",false);
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
                 .setPageSize(3)
