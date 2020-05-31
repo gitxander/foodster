@@ -38,6 +38,7 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
     protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull CartClass model) {
         holder.nameLabel.setText(model.getName());
         holder.descriptionLabel.setText(model.getDescription());
+        holder.priceLabel.setText("$"+ model.getPrice());
 
         int drawable = this.context.getResources().getIdentifier(model.getImage()   ,"drawable", this.packageName);
         holder.imageView.setImageResource(drawable);
@@ -47,6 +48,7 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
 
         private TextView nameLabel;
         private TextView descriptionLabel;
+        private TextView priceLabel;
         private ImageView imageView;
 
         public CartViewHolder(@NonNull View view) {
@@ -54,6 +56,7 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
 
             nameLabel = view.findViewById(R.id.nameLabel);
             descriptionLabel = view.findViewById(R.id.descriptionLabel);
+            priceLabel = view.findViewById(R.id.priceLabel);
             imageView = view.findViewById(R.id.imageView);
 
             view.setOnClickListener(this);

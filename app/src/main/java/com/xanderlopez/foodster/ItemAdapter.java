@@ -38,6 +38,7 @@ public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.I
     protected void onBindViewHolder(@NonNull ItemViewHolder holder, int position, @NonNull ItemClass model) {
         holder.nameLabel.setText(model.getName());
         holder.descriptionLabel.setText(model.getDescription());
+        holder.priceLabel.setText("$"+ model.getPrice());
 
         int drawable = this.context.getResources().getIdentifier(model.getImage()   ,"drawable", this.packageName);
         holder.imageView.setImageResource(drawable);
@@ -47,6 +48,7 @@ public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.I
 
         private TextView nameLabel;
         private TextView descriptionLabel;
+        private TextView priceLabel;
         private ImageView imageView;
 
         public ItemViewHolder(@NonNull View itemView) {
@@ -54,6 +56,7 @@ public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.I
 
             nameLabel = itemView.findViewById(R.id.nameLabel);
             descriptionLabel = itemView.findViewById(R.id.descriptionLabel);
+            priceLabel = itemView.findViewById(R.id.priceLabel);
             imageView = itemView.findViewById(R.id.imageView);
 
             itemView.setOnClickListener(this);

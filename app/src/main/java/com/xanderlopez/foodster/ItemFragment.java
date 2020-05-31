@@ -52,6 +52,7 @@ public class ItemFragment extends Fragment {
 
      TextView nameLabel;
      TextView descriptionLabel;
+    TextView priceLabel;
      ImageView imageView;
 
      ItemClass itemClass;
@@ -94,6 +95,7 @@ public class ItemFragment extends Fragment {
 
         nameLabel = rootView.findViewById(R.id.nameLabel);
         descriptionLabel = rootView.findViewById(R.id.descriptionLabel);
+        priceLabel = rootView.findViewById(R.id.priceLabel);
         imageView = rootView.findViewById(R.id.imageView);
 
         db = FirebaseFirestore.getInstance();
@@ -113,6 +115,7 @@ public class ItemFragment extends Fragment {
 
                                 nameLabel.setText(itemClass.getName());
                                 descriptionLabel.setText(itemClass.getDescription());
+                                priceLabel.setText("$" + itemClass.getPrice());
 
                                 int drawable = container.getContext().getResources().getIdentifier(itemClass.getImage(),"drawable", PACKAGE_NAME);
                                 imageView.setImageResource(drawable);
