@@ -90,7 +90,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         checkoutFragment = new CheckoutFragment();
 
         emptyCartLabel = findViewById(R.id.emptyCartLabel);
-        emptyCartLabel.setVisibility(View.INVISIBLE);
+        totalLabel = findViewById(R.id.totalLabel);
+        totalLabel2 = findViewById(R.id.totalLabel2);
+        checkoutButton = findViewById(R.id.checkoutButton);
+
+        this.cartIsEmpty();
 
         query.get()
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -99,22 +103,17 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
                     if (task.isSuccessful()) {
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
-
                             total += Double.parseDouble(String.valueOf(document.get("subtotal")));
-
                         }
 
-                        totalLabel = findViewById(R.id.totalLabel);
-                        totalLabel2 = findViewById(R.id.totalLabel2);
                         totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
 
                         if(total == 0) {
+                            cartIsEmpty();
                             emptyCartLabel.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
-                            checkoutButton.setVisibility(View.GONE);
-                            totalLabel.setVisibility(View.GONE);
-                            totalLabel2.setVisibility(View.GONE);
+                        } else {
+                            cartIsNotEmpty();
+                            emptyCartLabel.setVisibility(View.INVISIBLE);
                         }
                     } else {
                         Log.w(TAG, "Error getting documents.", task.getException());
@@ -122,7 +121,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
                 }
             });
 
-        checkoutButton = (Button) findViewById(R.id.checkoutButton);
+
         checkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,11 +131,26 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 
     }
 
-    public void checkout() {
+    public void cartIsEmpty() {
+        emptyCartLabel.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
         checkoutButton.setVisibility(View.INVISIBLE);
         totalLabel.setVisibility(View.INVISIBLE);
         totalLabel2.setVisibility(View.INVISIBLE);
+    }
+
+    public void cartIsNotEmpty() {
+        emptyCartLabel.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
+        checkoutButton.setVisibility(View.VISIBLE);
+        totalLabel.setVisibility(View.VISIBLE);
+        totalLabel2.setVisibility(View.VISIBLE);
+    }
+
+    public void checkout() {
+
+        this.cartIsEmpty();
+        emptyCartLabel.setVisibility(View.INVISIBLE);
 
         Bundle bundle = new Bundle();
         bundle.putString("PACKAGE_NAME", PACKAGE_NAME);
