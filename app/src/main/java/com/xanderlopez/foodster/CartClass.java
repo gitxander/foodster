@@ -5,7 +5,7 @@ public class CartClass {
     private int quantity;
     private String name, description, image, documentID, userID;
     private boolean ordered;
-    private Double price, subtotal;
+    private Double price, subtotal, total;
 
     public int getQuantity() {
         return quantity;
@@ -77,5 +77,13 @@ public class CartClass {
 
     public void setOrdered(boolean ordered) {
         this.ordered = ordered;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
     }
 }

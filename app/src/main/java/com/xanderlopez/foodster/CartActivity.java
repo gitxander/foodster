@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,12 +19,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnListItemClicked {
 
@@ -34,6 +43,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     CartAdapter cartAdapter;
     Fragment checkoutFragment;
     Button checkoutButton;
+    TextView emptyCart;
     private FirebaseAuth mAuth;
 
     public static String PACKAGE_NAME;
@@ -76,6 +86,35 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         recyclerView.setAdapter(cartAdapter);
 
         checkoutFragment = new CheckoutFragment();
+
+
+
+
+        query.get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        double total = 0.0;
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+
+                            total += Double.parseDouble(String.valueOf(document.get("subtotal")));
+
+                        }
+
+                        TextView totalLabel = findViewById(R.id.totalLabel);
+                        totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
+
+                        if(total == 0) {
+                            recyclerView.setVisibility(View.GONE);
+                            //emptyCart.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                    }
+                }
+            });
 
         checkoutButton = (Button) findViewById(R.id.checkoutButton);
         checkoutButton.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +171,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 //        startActivityForResult(intent, 0);
 
 
+    }
+
+    /*  function for rounding off to two decimal places
+     *   https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places  */
+    public static double round(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     public  void bottomNavigation() {

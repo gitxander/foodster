@@ -176,4 +176,7 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
 *
 * How to get package name from anywhere?
 * https://stackoverflow.com/questions/6589797/how-to-get-package-name-from-anywhere
+*
+* Firestore Paging Adapter- How to know if query returns 0 results
+* https://stackoverflow.com/questions/57441563/firestore-paging-adapter-how-to-know-if-query-returns-0-results
 * */
