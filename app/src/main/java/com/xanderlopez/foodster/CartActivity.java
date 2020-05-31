@@ -44,7 +44,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     Fragment checkoutFragment;
     Button checkoutButton;
     TextView emptyCart;
+    TextView totalLabel, totalLabel2;
     private FirebaseAuth mAuth;
+    double total = 0.0;
 
     public static String PACKAGE_NAME;
 
@@ -95,7 +97,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        double total = 0.0;
+
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
 
@@ -103,7 +105,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 
                         }
 
-                        TextView totalLabel = findViewById(R.id.totalLabel);
+                        totalLabel = findViewById(R.id.totalLabel);
+                        totalLabel2 = findViewById(R.id.totalLabel2);
                         totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
 
                         if(total == 0) {
@@ -129,9 +132,12 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     public void checkout() {
         recyclerView.setVisibility(View.INVISIBLE);
         checkoutButton.setVisibility(View.INVISIBLE);
+        totalLabel.setVisibility(View.INVISIBLE);
+        totalLabel2.setVisibility(View.INVISIBLE);
 
         Bundle bundle = new Bundle();
         bundle.putString("PACKAGE_NAME", PACKAGE_NAME);
+        bundle.putDouble("TOTAL", total);
 
         checkoutFragment.setArguments(bundle);
 

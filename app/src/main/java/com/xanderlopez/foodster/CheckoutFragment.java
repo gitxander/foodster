@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +34,8 @@ public class CheckoutFragment extends Fragment {
     private FirebaseAuth mAuth;
     FirebaseFirestore db;
     private static final String TAG = "Message";
+    Fragment checkoutSuccessFragment;
+
 
     public CheckoutFragment() {
         // Required empty public constructor
@@ -42,11 +46,12 @@ public class CheckoutFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             PACKAGE_NAME = getArguments().getString("PACKAGE_NAME");
-            total = getArguments().getDouble("total");
+            total = getArguments().getDouble("TOTAL");
         }
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        checkoutSuccessFragment = new CheckoutFragment();
     }
 
     @Override
@@ -61,6 +66,9 @@ public class CheckoutFragment extends Fragment {
                 checkout(v);
             }
         });
+
+        TextView totalLabel = rootView.findViewById(R.id.totalLabel);
+        totalLabel.setText("$" + total);
 
         return rootView;
     }
@@ -93,12 +101,14 @@ public class CheckoutFragment extends Fragment {
                             Log.w(TAG, "ORDER");
 
                             int random_int = (int)(Math.random() * 100000000);
+                            double total = 0.0;
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
 
                                 int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) + 1;
                                 double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
+                                total += newSubtotal;
 
                                 db.collection("carts").document(String.valueOf(document.get("documentID"))).update("ordered", true, "orderID", random_int)
                                     .addOnSuccessListener(new OnSuccessListener < Void > () {
