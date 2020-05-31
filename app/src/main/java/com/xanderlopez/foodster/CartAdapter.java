@@ -30,7 +30,7 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
     @NonNull
     @Override
     public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_cart, parent, false);
         return new CartViewHolder(view);
     }
 
@@ -39,6 +39,8 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
         holder.nameLabel.setText(model.getName());
         holder.descriptionLabel.setText(model.getDescription());
         holder.priceLabel.setText("$"+ model.getPrice());
+        holder.quantityLabel.setText(""+model.getQuantity());
+        holder.subtotalLabel.setText(""+model.getSubtotal());
 
         int drawable = this.context.getResources().getIdentifier(model.getImage()   ,"drawable", this.packageName);
         holder.imageView.setImageResource(drawable);
@@ -49,6 +51,8 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
         private TextView nameLabel;
         private TextView descriptionLabel;
         private TextView priceLabel;
+        private TextView quantityLabel;
+        private TextView subtotalLabel;
         private ImageView imageView;
 
         public CartViewHolder(@NonNull View view) {
@@ -58,6 +62,8 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
             descriptionLabel = view.findViewById(R.id.descriptionLabel);
             priceLabel = view.findViewById(R.id.priceLabel);
             imageView = view.findViewById(R.id.imageView);
+            quantityLabel = view.findViewById(R.id.quantityLabel);
+            subtotalLabel = view.findViewById(R.id.subtotalLabel);
 
             view.setOnClickListener(this);
         }
