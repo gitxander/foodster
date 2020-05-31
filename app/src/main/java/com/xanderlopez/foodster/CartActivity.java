@@ -194,15 +194,28 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) - 1;
         double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
 
-        db.collection("carts").document(document.getId()).update("quantity", newQuantity, "subtotal", newSubtotal)
-                .addOnSuccessListener(new OnSuccessListener< Void >() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
-                        total = 0.0;
-                        retrieveCart();
-                    }
-                });;
+        if(newQuantity == 0) {
+            db.collection("carts").document(document.getId()).delete()
+            .addOnSuccessListener(new OnSuccessListener< Void >() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    //Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
+                    total = 0.0;
+                    retrieveCart();
+                }
+            });
+        } else {
+            db.collection("carts").document(document.getId()).update("quantity", newQuantity, "subtotal", newSubtotal)
+                    .addOnSuccessListener(new OnSuccessListener< Void >() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //Toast.makeText(view.getContext(), cartClass.getName() + " Added to cart", Toast.LENGTH_SHORT).show();
+                            total = 0.0;
+                            retrieveCart();
+                        }
+                    });
+        }
+
     }
 
     @Override
