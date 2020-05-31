@@ -89,7 +89,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 
         checkoutFragment = new CheckoutFragment();
 
-        emptyCartLabel = findViewById(R.id.emptyCartLabel);
+        emptyCartLabel = findViewById(R.id.noOrderLabel);
         totalLabel = findViewById(R.id.totalLabel);
         totalLabel2 = findViewById(R.id.totalLabel2);
         checkoutButton = findViewById(R.id.checkoutButton);

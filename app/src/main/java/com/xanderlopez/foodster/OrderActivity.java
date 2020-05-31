@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,12 +16,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.NumberFormat;
 
 public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnListItemClicked {
 
@@ -30,7 +38,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
     OrderAdapter orderAdapter;
     public static String PACKAGE_NAME;
     private FirebaseAuth mAuth;
-
+    TextView noOrderLabel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +55,8 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
 
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.propertyRecyclerView);
+        noOrderLabel = findViewById(R.id.noOrderLabel);
+        noOrderLabel.setVisibility(View.INVISIBLE);
 
         FirebaseUser user = mAuth.getCurrentUser();
 
@@ -67,6 +77,27 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(orderAdapter);
+
+        query.get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        double total = 0.0;
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            total += Double.parseDouble(String.valueOf(document.get("subtotal")));
+                        }
+
+                        if(total == 0) {
+                            noOrderLabel.setVisibility(View.VISIBLE);
+                        } else {
+                            recyclerView.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                    }
+                }
+            });
 
     }
 

@@ -63,7 +63,7 @@
         app:menu="@menu/nav_items"></com.google.android.material.bottomnavigation.BottomNavigationView>
 
     <TextView
-        android:id="@+id/emptyCartLabel"
+        android:id="@+id/noOrderLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="false"
