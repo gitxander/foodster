@@ -8,7 +8,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/propertyRecyclerView"
-        android:layout_width="366dp"
+        android:layout_width="match_parent"
         android:layout_height="460dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -62,6 +62,14 @@
         app:itemTextColor="@color/nav_item_colors"
         app:menu="@menu/nav_items"></com.google.android.material.bottomnavigation.BottomNavigationView>
 
+    <TextView
+        android:id="@+id/emptyCartLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_centerInParent="true"
+        android:text="Cart is empty"
+        android:textSize="62sp" />
 
 
 </RelativeLayout>

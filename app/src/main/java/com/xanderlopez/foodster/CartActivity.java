@@ -44,7 +44,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     Fragment checkoutFragment;
     Button checkoutButton;
     TextView emptyCart;
-    TextView totalLabel, totalLabel2;
+    TextView totalLabel, totalLabel2, emptyCartLabel;
     private FirebaseAuth mAuth;
     double total = 0.0;
 
@@ -89,8 +89,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 
         checkoutFragment = new CheckoutFragment();
 
-
-
+        emptyCartLabel = findViewById(R.id.emptyCartLabel);
+        emptyCartLabel.setVisibility(View.INVISIBLE);
 
         query.get()
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -110,8 +110,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
                         totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
 
                         if(total == 0) {
+                            emptyCartLabel.setVisibility(View.VISIBLE);
                             recyclerView.setVisibility(View.GONE);
-                            //emptyCart.setVisibility(View.VISIBLE);
+                            checkoutButton.setVisibility(View.GONE);
+                            totalLabel.setVisibility(View.GONE);
+                            totalLabel2.setVisibility(View.GONE);
                         }
                     } else {
                         Log.w(TAG, "Error getting documents.", task.getException());
