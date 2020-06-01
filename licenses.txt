@@ -1,2 +1,6 @@
 Name, Author, Download Url, Attribution Url, License Type
-berry-bread-breakfast.jpg, Joseph Gonzalez, https://unsplash.com/photos/zcUgjyqEwe8, n/a, Unsplash license
+burger_fries.jpeg, Oscar Nord, https://unsplash.com/photos/49-PHWrRGPo, n/a, Unsplash license
+shrimp_pasta.jpeg, Giancarlo Revolledo, https://unsplash.com/photos/KddlIeXWIIk, n/a, Unsplash license
+vegetable_salad.jpeg, Chris A. Tweten, https://unsplash.com/photos/FK-UKNip0pE, n/a, Unsplash license
+chicken_nuggets.jpeg, Léo Roza, https://unsplash.com/photos/P_z_xlMGuEk, n/a, Unsplash license
+ice_cream.jpg, Krisztina Papp, https://unsplash.com/photos/g9jFg1utz1w, n/a, Unsplash license
