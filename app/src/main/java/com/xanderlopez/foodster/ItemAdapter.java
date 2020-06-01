@@ -16,10 +16,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.ItemViewHolder> {
 
+    /* Declare variables */
     private Context context;
     private String packageName;
     private OnListItemClicked onListItemClicked;
 
+    /* Construct the adapter */
     public ItemAdapter(@NonNull FirestorePagingOptions<ItemClass> options, Context context, String packageName, OnListItemClicked onListItemClicked) {
         super(options);
         this.context = context;
@@ -27,6 +29,7 @@ public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.I
         this.onListItemClicked = onListItemClicked;
     }
 
+    /* Inflate view holder */
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,6 +37,7 @@ public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.I
         return new ItemViewHolder(view);
     }
 
+    /* Set the labels and images base from the retrieved data collection */
     @Override
     protected void onBindViewHolder(@NonNull ItemViewHolder holder, int position, @NonNull ItemClass model) {
         holder.nameLabel.setText(model.getName());
@@ -44,8 +48,10 @@ public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.I
         holder.imageView.setImageResource(drawable);
     }
 
+    /* Implement the view holder */
     public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        /* Declare variables for labels, image, and button */
         private TextView nameLabel;
         private TextView descriptionLabel;
         private TextView priceLabel;
@@ -54,20 +60,24 @@ public class ItemAdapter extends FirestorePagingAdapter<ItemClass, ItemAdapter.I
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            /* set the labels, image, and button from the view resource */
             nameLabel = itemView.findViewById(R.id.nameLabel);
             descriptionLabel = itemView.findViewById(R.id.descriptionLabel);
             priceLabel = itemView.findViewById(R.id.priceLabel);
             imageView = itemView.findViewById(R.id.imageView);
 
+            /* implement click lister */
             itemView.setOnClickListener(this);
         }
 
+        /* If a button is clicked, what to do? Declare them here */
         @Override
         public void onClick(View v) {
             onListItemClicked.onItemClick(getItem(getAdapterPosition()), getAdapterPosition());
         }
     }
 
+    /* Interface to implement for the classes implementing this adapter */
     public interface OnListItemClicked {
         void onItemClick(DocumentSnapshot snapshot, int position);
     }

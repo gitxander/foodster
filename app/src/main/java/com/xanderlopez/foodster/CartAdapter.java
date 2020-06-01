@@ -18,11 +18,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.CartViewHolder> {
 
+    /* Declare variables */
     private Context context;
     private String packageName;
     private OnListItemClicked onListItemClicked;
     private static final String TAG = "Message";
 
+    /* Construct the adapter */
     public CartAdapter(@NonNull FirestorePagingOptions<CartClass> options, Context context, String packageName, OnListItemClicked onListItemClicked) {
         super(options);
         this.context = context;
@@ -30,30 +32,14 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
         this.onListItemClicked = onListItemClicked;
     }
 
+    /* Inflate view holder */
     @NonNull
     @Override
     public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_cart, parent, false);
-//
-//        final CartViewHolder holder = new CartViewHolder(view, new OnListItemClicked() {
-//
-//            @Override
-//            public void onItemDecreased(DocumentSnapshot snapshot, int position) {
-//                Log.d(TAG, "onItemDecreased");
-//
-//            }
-//
-//            @Override
-//            public void onItemIncreased(DocumentSnapshot snapshot, int position) {
-//                Log.d(TAG, "onItemIncreased");
-//            }
-//        });
-//
-//        return holder;
-
         return new CartViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_cart, parent, false), onListItemClicked);
     }
 
+    /* Set the labels and images base from the retrieved data collection */
     @Override
     protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull CartClass model) {
         holder.nameLabel.setText(model.getName());
@@ -66,8 +52,10 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
         holder.imageView.setImageResource(drawable);
     }
 
+    /* Implement the view holder */
     public class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        /* Declare variables for labels, image, and button */
         private TextView nameLabel;
         private TextView descriptionLabel;
         private TextView priceLabel;
@@ -78,9 +66,11 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
 
         private OnListItemClicked onListItemClicked;
 
+
         public CartViewHolder(@NonNull View view, OnListItemClicked onListItemClicked) {
             super(view);
 
+            /* set the labels, image, and button from the view resource */
             nameLabel = view.findViewById(R.id.nameLabel);
             descriptionLabel = view.findViewById(R.id.descriptionLabel);
             priceLabel = view.findViewById(R.id.priceLabel);
@@ -90,12 +80,15 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
             decreaseButton = view.findViewById(R.id.decreaseButton);
             increaseButton = view.findViewById(R.id.increaseButton);
 
+            /* implement click lister */
+
             this.onListItemClicked = onListItemClicked;
 
             decreaseButton.setOnClickListener(this);
             increaseButton.setOnClickListener(this);
         }
 
+        /* If a button is clicked, what to do? Declare them here */
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -109,6 +102,7 @@ public class CartAdapter extends FirestorePagingAdapter<CartClass, CartAdapter.C
         }
     }
 
+    /* Interface to implement for the classes implementing this adapter */
     public interface OnListItemClicked {
         void onItemDecreased(DocumentSnapshot snapshot, int position);
         void onItemIncreased(DocumentSnapshot snapshot, int position);
