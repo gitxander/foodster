@@ -1,0 +1,64 @@
+Work commits log
+
+2 May
+- Initial commit of the project
+
+9 May
+- Connected the app to firebase
+- Created restaurant class
+
+13 May
+- Implemented the main view: added recyclers and adapters, images, etc.
+- Connect the recycler view and adapter to firebase via FirestoreRecyclerOptions
+
+14 May
+- Layout enhancements
+- Added images, description and name for the items in the main view
+
+18 May
+- Refactored codes
+- Implemented click listeners for item clicked on the main view
+- Added bottom navigation bar and implemented functionality
+- Changed the colours for the navigation bar
+
+22 May
+- Show fragment when item is clicked
+
+25 May
+- New classes and navigation items
+- Implemented orders page, profile page, and menu pages
+- New layout files for new pages
+- Implemented adapters, classes for new pages
+- Retrieve item info when clicking it (show in fragment)
+- Add item to cart
+
+28 May
+- Update item quantity when an item is already added to the cart previously
+
+29 May
+- Create user, login and logout
+
+30 May
+- Change view layouts depending on user authentication session
+- Add item to cart base on auth ID
+- Implement cart checkout view layout and its functionality
+- Show orders (successful cart checkout)
+
+31 May
+- Check if user is logged in when adding an item to a cart
+- Show item prices on main menu, item fragments, orders, cart
+- Compute for subtotal and total prices of items
+- Show if the cart is empty, change view if it is
+- Display order details
+- Show if there are no orders
+- Round off prices to two decimal places
+- Implement increase/decrease item of items on cart
+- Delete items on cart if quantity is zero
+
+1 June
+- Added comments
+- Updated licenses.txt
+- Added new items, images, etc.
+- Fixed sign up->sign in bug
+
+
