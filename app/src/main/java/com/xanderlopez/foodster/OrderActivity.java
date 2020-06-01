@@ -67,9 +67,10 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
 
         /* Get the current logged in user */
         FirebaseUser user = mAuth.getCurrentUser();
+        String userID = user != null ? user.getUid() : "null";
 
         /* retrieve carts collection where userID field is equal to the current logged in user and ordered field is true */
-        Query query = db.collection("carts").whereEqualTo("userID", user.getUid()).whereEqualTo("ordered",true).orderBy("orderID");
+        Query query = db.collection("carts").whereEqualTo("userID", userID).whereEqualTo("ordered",true).orderBy("orderID");
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
                 .setPageSize(3)
