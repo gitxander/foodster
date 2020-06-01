@@ -40,15 +40,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 
     private static final String TAG = "Message";
 
-    FirebaseFirestore db;
-    RecyclerView recyclerView;
-    CartAdapter cartAdapter;
-    Fragment checkoutFragment;
-    Button checkoutButton;
-    TextView emptyCart;
-    TextView totalLabel, totalLabel2, emptyCartLabel;
+    private FirebaseFirestore db;
+    private RecyclerView recyclerView;
+    private CartAdapter cartAdapter;
+    private Fragment checkoutFragment;
+    private Button checkoutButton;
+    private TextView totalLabel, totalLabel2, emptyCartLabel;
     private FirebaseAuth mAuth;
-    double total = 0.0;
+    private double total = 0.0;
 
     public static String PACKAGE_NAME;
 
@@ -57,29 +56,40 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         super.onCreate(savedInstanceState);
         setTitle("Foodster / Cart");
 
-        /* Set second content view layout */
+        /* Set content view layout */
         setContentView(R.layout.cart);
 
+        /* Instantiate Firebase authentication */
         mAuth = FirebaseAuth.getInstance();
 
+        /* Call bottom navigation function */
         this.bottomNavigation();
 
+        /* Instantiate PACKAGE_NAME */
         PACKAGE_NAME = getApplicationContext().getPackageName();
 
+        /* Instantiate database */
         db = FirebaseFirestore.getInstance();
+
+        /* Instantiate recycler view */
         recyclerView = findViewById(R.id.propertyRecyclerView);
 
+        /* Call function to retrieve cart */
         this.retrieveCart();
 
+        /* Instantiate a new checkout fragment */
         checkoutFragment = new CheckoutFragment();
 
+        /* Instantiate labels and button */
         emptyCartLabel = findViewById(R.id.noOrderLabel);
         totalLabel = findViewById(R.id.totalLabel);
         totalLabel2 = findViewById(R.id.totalLabel2);
         checkoutButton = findViewById(R.id.checkoutButton);
 
+        /* Call function to change view when cart is empty */
         this.cartIsEmpty();
 
+        /* Add onClickListener to checkout button */
         checkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,11 +99,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 
     }
 
+    /* Retrieve cart items */
     public void retrieveCart() {
+
+        /* Check if user is logged in */
         FirebaseUser user = mAuth.getCurrentUser();
         String userID = user != null ? user.getUid() : "null";
 
-        //Query
+        /* retrieve carts collection where userID field is equal to the current logged in user and ordered field is false */
         Query query = db.collection("carts").whereEqualTo("userID", userID).whereEqualTo("ordered",false);
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
@@ -105,38 +118,50 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
                 .setQuery(query, config, CartClass.class)
                 .build();
 
+        /* Instantiate adapter. Pass firebase query to the adapter */
         cartAdapter = new CartAdapter(options, this.getApplicationContext(), PACKAGE_NAME, this);
 
+        /* Configure recycler view */
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cartAdapter);
 
-        query.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                total += Double.parseDouble(String.valueOf(document.get("subtotal")));
-                            }
-
-                            totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
-
-                            if(total == 0) {
-                                cartIsEmpty();
-                                emptyCartLabel.setVisibility(View.VISIBLE);
-                            } else {
-                                cartIsNotEmpty();
-                                emptyCartLabel.setVisibility(View.INVISIBLE);
-                            }
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        /* call function to check if cart is empty */
+        this.checkIfCartIsEmpty(query);
     }
 
+    /* If cart is empty, show that the cart is empty */
+    public void checkIfCartIsEmpty(Query query) {
+        query.get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            /* Compute for the total price of the items in cart */
+                            total += Double.parseDouble(String.valueOf(document.get("subtotal")));
+                        }
+
+                        /* Set total price on the label */
+                        totalLabel.setText("$"+NumberFormat.getInstance().format(round(total)));
+
+                        /* If there are no items, show that cart is empty. Otherwise show items */
+                        if(total == 0) {
+                            cartIsEmpty();
+                            emptyCartLabel.setVisibility(View.VISIBLE);
+                        } else {
+                            cartIsNotEmpty();
+                            emptyCartLabel.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                    }
+                }
+            });
+    }
+
+    /* Show/hide labels and button when cart is empty */
     public void cartIsEmpty() {
         emptyCartLabel.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
@@ -145,6 +170,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         totalLabel2.setVisibility(View.INVISIBLE);
     }
 
+    /* Show/hide labels and button when cart is not empty */
     public void cartIsNotEmpty() {
         emptyCartLabel.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.VISIBLE);
@@ -153,17 +179,21 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         totalLabel2.setVisibility(View.VISIBLE);
     }
 
+    /* Function to show the checkout fragment */
     public void checkout() {
 
         this.cartIsEmpty();
         emptyCartLabel.setVisibility(View.INVISIBLE);
 
+        /* Set variables to be pass on the fragment */
         Bundle bundle = new Bundle();
         bundle.putString("PACKAGE_NAME", PACKAGE_NAME);
         bundle.putDouble("TOTAL", total);
 
+        /* Pass variables to the fragment */
         checkoutFragment.setArguments(bundle);
 
+        /* Begin fragment transaction */
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
@@ -186,15 +216,17 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         cartAdapter.stopListening();
     }
 
+    /* Function to call when user decreases an item on a cart */
     @Override
     public void onItemDecreased(DocumentSnapshot document, int position) {
         Log.d(TAG, "onItemDecreased - cartactivity");
         Log.d(TAG, position + " " + document.getId() + " " + document.get("quantity"));
 
-
+        /* Compute for the new quantity and new subtotal */
         int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) - 1;
         double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
 
+        /* Check if new quantity is 0: delete item from the cart */
         if(newQuantity == 0) {
             db.collection("carts").document(document.getId()).delete()
             .addOnSuccessListener(new OnSuccessListener< Void >() {
@@ -206,6 +238,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
                 }
             });
         } else {
+            /* Update the cart. Decrease item count and update new subtotal */
             db.collection("carts").document(document.getId()).update("quantity", newQuantity, "subtotal", newSubtotal)
                     .addOnSuccessListener(new OnSuccessListener< Void >() {
                         @Override
@@ -219,13 +252,16 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
 
     }
 
+    /* Function to call when user increases an item on a cart */
     @Override
     public void onItemIncreased(DocumentSnapshot document, int position) {
         Log.d(TAG, "onItemIncreased - cartactivity");
 
+        /* Compute for the new quantity and new subtotal */
         int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) + 1;
         double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
 
+        /* Update the cart. Decrease item count and update new subtotal */
         db.collection("carts").document(document.getId()).update("quantity", newQuantity, "subtotal", newSubtotal)
                 .addOnSuccessListener(new OnSuccessListener< Void >() {
                     @Override
@@ -246,6 +282,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
         return bd.doubleValue();
     }
 
+    /* Function to set the functionality of the bottom navigation */
     public  void bottomNavigation() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
