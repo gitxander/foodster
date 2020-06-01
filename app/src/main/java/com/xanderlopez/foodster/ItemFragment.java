@@ -41,11 +41,8 @@ import java.util.Map;
 
 public class ItemFragment extends Fragment {
 
-    String[] newsCategories = {"National","National"};
-    //Integer[] newsCategoriesImages = {R.drawable.berry_bread_breakfast};
     private static final String TAG = "Message";
 
-    List<Restaurant> propertyList;
     FirebaseFirestore db;
 
     String PACKAGE_NAME, name;
@@ -76,9 +73,6 @@ public class ItemFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-
-        /* Instantiate propertyList */
-        propertyList = new ArrayList<>();
 
         itemClass = new ItemClass();
 

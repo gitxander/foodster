@@ -31,14 +31,14 @@ import java.text.NumberFormat;
 
 public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnListItemClicked {
 
+    /* Declare variables */
     private static final String TAG = "Message";
-
-    FirebaseFirestore db;
-    RecyclerView recyclerView;
-    OrderAdapter orderAdapter;
+    private FirebaseFirestore db;
+    private RecyclerView recyclerView;
+    private OrderAdapter orderAdapter;
     public static String PACKAGE_NAME;
     private FirebaseAuth mAuth;
-    TextView noOrderLabel;
+    private TextView noOrderLabel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,20 +48,27 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
         /* Set second content view layout */
         setContentView(R.layout.order);
 
+        /* Instantiate Firebase authentication */
         mAuth = FirebaseAuth.getInstance();
 
+        /* Call bottom navigation function */
         this.bottomNavigation();
 
+        /* Instantiate PACKAGE_NAME */
         PACKAGE_NAME = getApplicationContext().getPackageName();
 
+        /* Instantiate database */
         db = FirebaseFirestore.getInstance();
+
+        /* Instantiate recycler view and other properties */
         recyclerView = findViewById(R.id.propertyRecyclerView);
         noOrderLabel = findViewById(R.id.noOrderLabel);
         noOrderLabel.setVisibility(View.INVISIBLE);
 
+        /* Get the current logged in user */
         FirebaseUser user = mAuth.getCurrentUser();
 
-        //Query
+        /* retrieve carts collection where userID field is equal to the current logged in user and ordered field is true */
         Query query = db.collection("carts").whereEqualTo("userID", user.getUid()).whereEqualTo("ordered",true).orderBy("orderID");
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(10)
@@ -73,12 +80,15 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
                 .setQuery(query, config, CartClass.class)
                 .build();
 
+        /* Instantiate adapter. Pass firebase query to the adapter */
         orderAdapter = new OrderAdapter(options, this.getApplicationContext(), PACKAGE_NAME, this);
 
+        /* Configure recycler view */
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(orderAdapter);
 
+        /* If order is empty, show that the order is empty */
         query.get()
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -102,11 +112,13 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
 
     }
 
+    /* When user clicks an item on the list */
     @Override
     public void onItemClick(DocumentSnapshot snapshot, int position) {
         Log.d(TAG, position + " " + snapshot.getId());
     }
 
+    /* Function to set the functionality of the bottom navigation */
     public  void bottomNavigation() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.getMenu().getItem(2).setChecked(true);

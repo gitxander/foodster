@@ -23,8 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    /* Declare variables */
     private static final String TAG = "Message";
-
     private FirebaseAuth mAuth;
 
     @Override
@@ -32,7 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTitle("Foodster / Profile");
 
-
+        /* Instantiate Firebase authentication */
         mAuth = FirebaseAuth.getInstance();
 
     }
@@ -49,9 +49,9 @@ public class ProfileActivity extends AppCompatActivity {
             signin();
         }
 
-
     }
 
+    /* Function for user profile layout and implement click listeners */
     public void profile(FirebaseUser user) {
         setContentView(R.layout.profile);
         bottomNavigation();
@@ -59,7 +59,6 @@ public class ProfileActivity extends AppCompatActivity {
         // Name, email address, and profile photo Url
         String name = user.getDisplayName();
         String email = user.getEmail();
-        //Uri photoUrl = user.getPhotoUrl();
 
         // Check if user's email is verified
         boolean emailVerified = user.isEmailVerified();
@@ -75,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d(TAG, "name " + name);
         Log.d(TAG, "email " + email);
 
+        /* add click listener to logout button */
         Button logoutButton = (Button) findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,12 +85,14 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /* Function to show sign in view layout and implement click listeners */
     public void signin() {
         setContentView(R.layout.profile_signin);
         bottomNavigation();
 
         Log.d(TAG, "sign in button clicked ");
 
+        /* add click listener to sign in button */
         Button signinButton = (Button) findViewById(R.id.signinButton);
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +101,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        /* add click listener to sign up button */
         Button signupButton = (Button) findViewById(R.id.signupButton);
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,10 +112,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    /* Function to show sign up view layout and implement click listeners */
     public void signup() {
         setContentView(R.layout.profile_signup);
         bottomNavigation();
 
+        /* add click listener to sign up button */
         Button signupButton = (Button) findViewById(R.id.signupButton);
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +126,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        /* add click listener to cancel button */
         Button cancelButton = (Button) findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,26 +137,32 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    /* Function to create user */
     public void createUserWithEmailAndPassword(View view) {
 
+        /* Declare variables for TextViews and assign them base on the view resources */
         TextView emailInput = (TextView) findViewById(R.id.cardName);
         TextView passwordInput = (TextView) findViewById(R.id.passwordInput);
         TextView passwordConfirmInput = (TextView) findViewById(R.id.passwordConfirmInput);
 
+        /* Convert the view resources value to string */
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();
         String confirmPassword  = passwordConfirmInput.getText().toString();
 
+        /* Check if all of the input fields have values */
         if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
             Toast.makeText(ProfileActivity.this, "Please answer all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        /* Check if the passwords match */
         if(!password.equals(confirmPassword)) {
             Toast.makeText(ProfileActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        /* Save the user credentials on firebase */
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -172,21 +184,26 @@ public class ProfileActivity extends AppCompatActivity {
             });
     }
 
+    /* Function to sign in user */
     public  void signInWithEmailAndPassword(View view) {
 
         Log.d(TAG, "triggered signInWithEmailAndPassword ");
 
+        /* Declare variables for TextViews and assign them base on the view resources */
         TextView emailInput = (TextView) findViewById(R.id.cardName);
         TextView passwordInput = (TextView) findViewById(R.id.passwordInput);
 
+        /* Convert the view resources value to string */
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();
 
+        /* Check if all of the input fields have values */
         if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             Toast.makeText(ProfileActivity.this, "Please answer all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        /* Sign in user */
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -208,6 +225,7 @@ public class ProfileActivity extends AppCompatActivity {
             });
     }
 
+    /* Function to set the functionality of the bottom navigation */
     public  void bottomNavigation() {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);

@@ -34,13 +34,13 @@ import java.text.NumberFormat;
 
 public class CheckoutFragment extends Fragment {
 
-    String PACKAGE_NAME;
-    Double total;
+    private String PACKAGE_NAME;
+    private Double total;
     private FirebaseAuth mAuth;
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
     private static final String TAG = "Message";
-    TextView cardNameInput, cardNumberInput, cvvInput, expiryInput, checkoutTextView, checkoutSuccessLabel;
-    Button checkoutButton, goBackButton;
+    private TextView cardNameInput, cardNumberInput, cvvInput, expiryInput, checkoutTextView, checkoutSuccessLabel;
+    private Button checkoutButton, goBackButton;
 
     public CheckoutFragment() {
         // Required empty public constructor
@@ -49,12 +49,17 @@ public class CheckoutFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /* Get the passed arguments from previous activity */
         if (getArguments() != null) {
             PACKAGE_NAME = getArguments().getString("PACKAGE_NAME");
             total = getArguments().getDouble("TOTAL");
         }
 
+        /* Instantiate Firebase authentication */
         mAuth = FirebaseAuth.getInstance();
+
+        /* Instantiate database */
         db = FirebaseFirestore.getInstance();
 
     }
@@ -64,9 +69,11 @@ public class CheckoutFragment extends Fragment {
         /* get the root view fragment layout */
         View rootView = inflater.inflate(R.layout.fragment_checkout, container, false);
 
+        /* Set label from resource and hide from view */
         checkoutSuccessLabel = rootView.findViewById(R.id.checkoutSuccessLabel);
         checkoutSuccessLabel.setVisibility(View.INVISIBLE);
 
+        /* Set button from view resource and add onClickListener */
         checkoutButton = rootView.findViewById(R.id.confirmButton);
         checkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +82,7 @@ public class CheckoutFragment extends Fragment {
             }
         });
 
+        /* Set button from view resource and add onClickListener */
         goBackButton = rootView.findViewById(R.id.goBackButton);
         goBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +92,7 @@ public class CheckoutFragment extends Fragment {
         });
         goBackButton.setVisibility(View.INVISIBLE);
 
+        /* Set label from resource and set text value */
         TextView totalLabel = rootView.findViewById(R.id.totalLabel);
         totalLabel.setText("$"+ NumberFormat.getInstance().format(round(total)));
 
@@ -91,17 +100,21 @@ public class CheckoutFragment extends Fragment {
     }
 
     public void checkout(View view) {
+
+        /* set the labels, image, and button from the view resource */
         cardNameInput = getView().findViewById(R.id.cardName);
         cardNumberInput = getView().findViewById(R.id.cardNumber);
         cvvInput = getView().findViewById(R.id.cvv);
         expiryInput = getView().findViewById(R.id.expiry);
         checkoutTextView = getView().findViewById(R.id.checkoutTextView);
 
+        /* Convert the view resources value to string */
         String cardName = cardNameInput.getText().toString();
         String cardNumber = cardNumberInput.getText().toString();
         String cvv  = cvvInput.getText().toString();
         String expiry  = expiryInput.getText().toString();
 
+        /* Check if all of the input fields have values */
         if(TextUtils.isEmpty(cardName) || TextUtils.isEmpty(cardNumber) || TextUtils.isEmpty(cvv) || TextUtils.isEmpty(expiry)) {
             Toast.makeText(view.getContext(), "Please answer all fields", Toast.LENGTH_SHORT).show();
         } else {
@@ -124,10 +137,12 @@ public class CheckoutFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
 
+                                /* Compute for the new quantity and new subtotal */
                                 int newQuantity = Integer.parseInt(String.valueOf(document.get("quantity"))) + 1;
                                 double newSubtotal = Double.parseDouble(String.valueOf(document.get("price"))) * newQuantity;
                                 total += newSubtotal;
 
+                                /* Update cart; set ordered is true to each item */
                                 db.collection("carts").document(String.valueOf(document.get("documentID"))).update("ordered", true, "orderID", random_int)
                                     .addOnSuccessListener(new OnSuccessListener < Void > () {
                                         @Override
@@ -138,6 +153,7 @@ public class CheckoutFragment extends Fragment {
 
                             }
 
+                            /* Show success view layout */
                             checkoutSuccessFragment();
 
 
@@ -149,11 +165,13 @@ public class CheckoutFragment extends Fragment {
         }
     }
 
+    /* When user clicks go back button */
     public void goBack(View view) {
         Intent homeIntent = new Intent(this.getContext(), MainActivity.class);
         startActivityForResult(homeIntent, 0);
     }
 
+    /* Show/hide labels and button when checkout is successful */
     public void checkoutSuccessFragment() {
 
         cardNameInput.setVisibility(View.INVISIBLE);
