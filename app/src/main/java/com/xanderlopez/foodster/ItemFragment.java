@@ -42,7 +42,7 @@ import java.util.Map;
 public class ItemFragment extends Fragment {
 
     String[] newsCategories = {"National","National"};
-    Integer[] newsCategoriesImages = {R.drawable.berry_bread_breakfast};
+    //Integer[] newsCategoriesImages = {R.drawable.berry_bread_breakfast};
     private static final String TAG = "Message";
 
     List<Restaurant> propertyList;

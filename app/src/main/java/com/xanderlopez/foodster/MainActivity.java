@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
 
     private static final String TAG = "Message";
 
-    List<Restaurant> propertyList = new ArrayList<>();
-    String[] expenseType = {"Home Rent", "Eating Out", "Travel", "Shopping"};
     FirebaseFirestore db;
     RecyclerView recyclerView;
     ItemAdapter itemAdapter;
@@ -75,15 +73,8 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
         recyclerView.setAdapter(itemAdapter);
 
         itemFragment = new ItemFragment();
-//
+
     }
-
-//
-//    @Override
-//    public void onItemClicked(int position) {
-//
-//    }
-
 
     @Override
     protected void onStart() {
@@ -100,15 +91,6 @@ public class MainActivity extends AppCompatActivity implements ItemAdapter.OnLis
     @Override
     public void onItemClick(DocumentSnapshot snapshot, int position) {
         Log.d(TAG, position + " " + snapshot.getId());
-
-//        /* Initialise new intent */
-//        Intent intent = new Intent(this, HomeMenuActivity.class);
-//
-//        /* Pass expense type data to the second activity */
-//        intent.putExtra("EXPENSE_TYPE", position + " " + snapshot.getId());
-//
-//        /* Start next activity */
-//        startActivityForResult(intent, 0);
 
         recyclerView.setVisibility(View.INVISIBLE);
 

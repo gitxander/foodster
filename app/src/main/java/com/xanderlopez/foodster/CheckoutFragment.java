@@ -39,7 +39,6 @@ public class CheckoutFragment extends Fragment {
     private FirebaseAuth mAuth;
     FirebaseFirestore db;
     private static final String TAG = "Message";
-    //Fragment checkoutSuccessFragment;
     TextView cardNameInput, cardNumberInput, cvvInput, expiryInput, checkoutTextView, checkoutSuccessLabel;
     Button checkoutButton, goBackButton;
 

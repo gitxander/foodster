@@ -33,15 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
         setTitle("Foodster / Profile");
 
 
-
-
-
         mAuth = FirebaseAuth.getInstance();
-
-
-
-
-
 
     }
 
