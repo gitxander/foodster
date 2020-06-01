@@ -55,6 +55,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnLis
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Foodster / Cart");
 
         /* Set second content view layout */
         setContentView(R.layout.cart);

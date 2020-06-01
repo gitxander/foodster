@@ -43,6 +43,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnL
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Foodster / Order");
 
         /* Set second content view layout */
         setContentView(R.layout.order);
